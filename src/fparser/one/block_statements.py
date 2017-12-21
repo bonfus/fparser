@@ -80,11 +80,11 @@ __all__ = ['BeginSource', 'Module', 'PythonModule', 'Program', 'BlockData',
 import re
 import sys
 
-from .base_classes import BeginStatement, EndStatement, Statement, \
-     AttributeHolder, ProgramBlock, Variable
-from .readfortran import Line
-from .utils import split_comma, filter_stmts, parse_bind, parse_result, \
-    AnalyzeError, is_name
+from fparser.one.base_classes import BeginStatement, EndStatement, \
+     Statement, AttributeHolder, ProgramBlock, Variable
+from fparser.readfortran import Line
+from fparser.utils import split_comma, filter_stmts, parse_bind, \
+     parse_result, AnalyzeError, is_name
 
 class HasImplicitStmt(object):
 

@@ -39,7 +39,7 @@
 '''
 Tests that the parser understands deferred methods.
 '''
-import fparser.Fortran2003
+import fparser.two.Fortran2003
 import fparser.readfortran
 
 
@@ -72,7 +72,7 @@ END MODULE abstract_test
 '''.strip().split('\n')
 
     reader = fparser.readfortran.FortranStringReader(source)
-    program_unit = fparser.Fortran2003.Program(reader)
+    program_unit = fparser.two.Fortran2003.Program(reader)
     result = str(program_unit).strip().split('\n')
 
     assert result == expected

@@ -75,9 +75,9 @@ import copy
 import string
 import logging
 from six import with_metaclass
-from .readfortran import Line, Comment
-from .utils import split_comma, specs_split_comma, is_int_literal_constant
-from .utils import classes, AnalyzeError
+from fparser.readfortran import Line, Comment
+from fparser.utils import split_comma, specs_split_comma, is_int_literal_constant
+from fparser.utils import classes, AnalyzeError
 from functools import reduce
 
 logger = logging.getLogger('fparser')

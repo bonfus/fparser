@@ -71,9 +71,9 @@
 
 import re
 import logging
-from .splitline import string_replace_map
-from . import pattern_tools as pattern
-from .readfortran import FortranReaderBase
+from fparser.splitline import string_replace_map
+from fparser import pattern_tools as pattern
+from fparser.readfortran import FortranReaderBase
 
 logger = logging.getLogger("fparser")
 
