@@ -159,7 +159,7 @@ class Base(ComparableMixin):
     subclasses = {}
 
     @show_result
-    def __new__(cls, string, parent_cls=None):
+    def __new__(cls, string, parent_cls=None, comments = []):
         """
         Create a new instance of this object.
 
@@ -179,10 +179,16 @@ class Base(ComparableMixin):
         match = cls.__dict__.get('match')
 
         result = None
+        coms = []
         if isinstance(string, FortranReaderBase) and \
            match and not issubclass(cls, BlockBase):
             reader = string
             item = reader.get_item()
+	    # parse all comments
+            while hasattr(item,'comment'):
+                coms.append(item)
+                item = string.get_item()
+
             if item is None: return
             try:
                 obj = item.parse_line(cls, parent_cls)
@@ -191,8 +197,11 @@ class Base(ComparableMixin):
                 obj = None
             if obj is None:
                 reader.put_item(item)
+                for c in coms:
+                    reader.put_item(c)
                 return
             obj.item = item
+            obj.comments = coms
             return obj
 
         if match:
@@ -209,6 +218,7 @@ class Base(ComparableMixin):
             obj = object.__new__(cls)
             obj.string = string
             obj.item = None
+            obj.comments = comments
             if hasattr(cls, 'init'): obj.init(*result)
             return obj
         elif isinstance(result, Base):
@@ -219,7 +229,7 @@ class Base(ComparableMixin):
                     continue
                 #print '%s:%s: %r' % (cls.__name__,subcls.__name__,string)
                 try:
-                    obj = subcls(string, parent_cls = parent_cls)
+                    obj = subcls(string, parent_cls = parent_cls, comments=coms)
                 except NoMatchError as msg:
                     obj = None
                 if obj is not None:

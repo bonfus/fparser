@@ -606,7 +606,7 @@ class FortranReaderBase(object):
         """ Return next item.
         """
         try:
-            item = self.next(ignore_comments = True)
+            item = self.next(ignore_comments = False)
         except StopIteration:
             return
         return item
