@@ -197,7 +197,7 @@ class Base(ComparableMixin):
                 obj = None
             if obj is None:
                 reader.put_item(item)
-                for c in coms:
+                for c in coms[::-1]:
                     reader.put_item(c)
                 return
             obj.item = item
