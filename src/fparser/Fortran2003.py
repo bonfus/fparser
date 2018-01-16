@@ -184,7 +184,7 @@ class Base(ComparableMixin):
            match and not issubclass(cls, BlockBase):
             reader = string
             item = reader.get_item()
-	    # parse all comments
+            # parse all comments
             while hasattr(item,'comment'):
                 coms.append(item)
                 item = string.get_item()
@@ -197,7 +197,7 @@ class Base(ComparableMixin):
                 obj = None
             if obj is None:
                 reader.put_item(item)
-                for c in coms[::-1]:
+                for c in reversed(coms):
                     reader.put_item(c)
                 return
             obj.item = item
@@ -2491,6 +2491,26 @@ class Intent_Attr_Spec(CALLBase): # R503.f
     def match(string): return CALLBase.match('INTENT', Intent_Spec, string)
     match = staticmethod(match)
 
+class Device_Attr_Spec(StmtBase, WORDClsBase): # Cudafortran
+    """
+    <optional-stmt> = DEVICE [ :: ] <dummy-arg-name-list>
+    """
+    subclass_names = []
+    use_names = ['Dummy_Arg_Name_List']
+    def match(string): return WORDClsBase.match('DEVICE',Dummy_Arg_Name_List,string,check_colons=True, require_cls=True)
+    match = staticmethod(match)
+    tostr = WORDClsBase.tostr_a
+
+class Pinned_Attr_Spec(StmtBase, WORDClsBase): # Cudafortran
+    """
+    <optional-stmt> = DEVICE [ :: ] <dummy-arg-name-list>
+    """
+    subclass_names = []
+    use_names = ['Dummy_Arg_Name_List']
+    def match(string): return WORDClsBase.match('PINNED',Dummy_Arg_Name_List,string,check_colons=True, require_cls=True)
+    match = staticmethod(match)
+    tostr = WORDClsBase.tostr_a
+    
 class Attr_Spec(STRINGBase): # R503
     """
     <attr-spec> = <access-spec>
@@ -2509,9 +2529,12 @@ class Attr_Spec(STRINGBase): # R503
                   | TARGET
                   | VALUE
                   | VOLATILE
+                  | DEVICE
+                  | PINNED
     """
     subclass_names = ['Access_Spec', 'Language_Binding_Spec',
-                      'Dimension_Attr_Spec', 'Intent_Attr_Spec']
+                      'Dimension_Attr_Spec', 'Intent_Attr_Spec',
+                      'Device_Attr_Spec', 'Pinned_Attr_Spec']
     use_names = []
     def match(string): return STRINGBase.match(pattern.abs_attr_spec, string)
     match = staticmethod(match)
