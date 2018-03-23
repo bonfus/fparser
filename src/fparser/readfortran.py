@@ -184,6 +184,17 @@ def _is_fix_comment(line, isstrict):
     elif line=='':
         return True
     return False
+def _is_preprocessor_directive(line):
+    """ Check if line is a comment line in fixed format Fortran source.
+
+    References
+    ----------
+    :f2008:`3.3.3`
+    """
+    if line:
+        if line[0] in '#':
+            return True
+    return False
 _hollerith_start_search = re.compile(r'(?P<pre>\A|,\s*)(?P<num>\d+)h',re.I).search
 _is_call_stmt = re.compile(r'call\b', re.I).match
 
@@ -1024,6 +1035,9 @@ class FortranReaderBase(object):
                 r = self.handle_multilines(line, startlineno, mlstr)
                 if r: return r
         if self.isfixed:
+            if _is_preprocessor_directive(line):
+                return self.comment_item(line, startlineno, startlineno)
+
             if _is_fix_comment(line, isstrict):
                 # comment line:
                 return self.comment_item(line, startlineno, startlineno)
@@ -1155,7 +1169,7 @@ class FortranReaderBase(object):
                 # free format
                 line_lstrip = line.lstrip()
                 if lines:
-                    if line_lstrip.startswith('!'):
+                    if line_lstrip.startswith('!') or line_lstrip.startswith('#'):
                         # check for comment line within line continuation
                         put_item(self.comment_item(line_lstrip,
                                                    self.linecount, self.linecount))
@@ -1179,6 +1193,9 @@ class FortranReaderBase(object):
                         name = m.group('name')
                         line = line[m.end():].lstrip()
                 line,qc,had_comment = handle_inline_comment(line, self.linecount, qc)
+                if _is_preprocessor_directive(line):
+                    put_item(self.comment_item(line,self.linecount, self.linecount))
+                    line = None
                 have_comment |= had_comment
                 is_f2py_directive = self.linecount in self.f2py_comment_lines
 
